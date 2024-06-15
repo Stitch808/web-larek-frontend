@@ -46,19 +46,7 @@ yarn build
 Данные карточки товара
 
 ```
-export interface IProduct {
-    id: string;
-    description: string;
-    image: string;
-    title: string;
-    category: ProductCategory;
-    price: number | null;
-}
-```
-
-Категории продуктов
-```
-export interface IProduct {
+interface IProduct {
     id: string;
     description: string;
     image: string;
@@ -70,7 +58,7 @@ export interface IProduct {
 
 Ошибки в форме
 ```
-export type FormErrors = {
+type FormErrors = {
 	email?: string;
 	phone?: string;
 	address?: string;
@@ -81,7 +69,7 @@ export type FormErrors = {
 Пользовательские данные
 
 ```
-export interface IUserData {
+interface IUserData {
     adress: string;
     email: string;
     phone: string;
@@ -94,20 +82,19 @@ export interface IUserData {
 Интерфейс для данных заказа
 
 ```
-export interface IOrder {
+interface IOrder {
     address: string;
     phone: number;
     payment: OrderPayment;
     mail: string;
     total: number | null;
     items: IProduct[]
-    errors: FormErrors
 }
 ```
 
 Результат заказа
 ```
-export interface IOrderResult {
+interface IOrderResult {
     id: string
     total: number
 }
@@ -115,7 +102,7 @@ export interface IOrderResult {
 
 Интерфейс корзины товаров
 ```
-export interface IBasket {
+interface IBasket {
     items: IProduct[];
     total: number | null;
     resetBasket(): void - очищение данных после успешного заказа
@@ -124,7 +111,7 @@ export interface IBasket {
 
 Интерфейс открытой карточки товара для просмотра
 ```
-export interface IExploreCard {
+interface IExploreCard {
     items: IProduct[];
     preview: string | null;
 }
@@ -132,11 +119,9 @@ export interface IExploreCard {
 
 Интерфейс каталогa товаров
 ```
-export interface IListItem {
+interface IListItem {
     items: TMainCards[]; - массив карточек на главной странице
     preview: string | null; - id открытой карточки
-    addItemToBasket(item: string, payload: Function | null): TBasket; - добавляем товар по id в корзину
-    deleteItemFromBasket(item: string, payload: Function | null): void; - удаляем товар по id из корзины
     showOneItem(item: string): void; - открываем карточку для просмотра по id 
     getItems(): IProduct[]; - получаем массив карточек с сервера
     saveItems(): IProduct[]; - сохраняем массив карточек
@@ -151,7 +136,7 @@ type TMainCards = Omit<IProduct, "description">
 Данные карточки, используемые в модальном окне корзины
 
 ```
-export type TBasket = Pick<IProduct, 'id' | 'title' | 'price'>
+type TBasket = Pick<IProduct, 'id' | 'title' | 'price'>
 ```
 
 Выбор способа оплаты
@@ -162,13 +147,13 @@ type OrderPayment = "online" | "cash"
 Сособ оплаты и адрес пользователя
 
 ```
-export type TPayment = Pick<IOrder, 'payment' | 'address'>
+type TPayment = Pick<IOrder, 'payment' | 'address'>
 ```
 
 Контактные данные пользователя: почта и телефон
 
 ```
-export type TContactInf = Pick<IOrder, 'mail' | 'telephone'>
+type TContactInf = Pick<IOrder, 'mail' | 'telephone'>
 ```
 
 Тип открытого модального окна 
@@ -271,15 +256,6 @@ type AppStateModal = "product" | "basket" | "order"
 
 - `constructor(events: IEvents): void`
 
-Содержит поля: 
-
-- `_email: string;` 
-- `_phone: string;`
-- `_address: string;`
-- `_payment: string;`
-- `_items: IProduct[];`
-- `_total: number | null;`
-
 Методы класса для взаимодействия с данными: 
 
 - `createOrder(data: IOrder, payload: Function | null): void` отправка заказа 
@@ -318,7 +294,7 @@ Mетоды:
 - `setData(cardData: IProduct): void;` заполняет данными элементы карточки
 - `getCard(card: object): HTMLElement;` возвращает заполненную данными карточку
 - `getIdCard(card: object): string`  возвращает id карточки
-- `set() и get()` - для доступа к свойствам  
+- `set()` - для передачи данных для отображения 
 
 ### класс `Main`
 
@@ -328,7 +304,7 @@ Mетоды:
 
 ### класс `ModalPopUp` 
 
-*ОБЩИЙ* класс модального окна. Предоставляет методы `open` и `close`, а также слушатели закрытия модального окна при клике на клавишу esc, overlay, кнопку с срестиком.
+Класс модального окна. Предоставляет методы `open` и `close`, а также слушатели закрытия модального окна при клике на клавишу esc, overlay, кнопку с срестиком.
 
 Конструктор принимает селектор, по которому в разметке будет найдено необходимое модальное окно и экземпляр класса EventEmitter для инициации событий 
 
@@ -348,7 +324,7 @@ Mетоды:
 
 ### класс `BasketPopUp` 
 
-Расширяет класс `ModalPopUp`. Отвечает за отображениие выбранных товаров в корзине
+Отвечает за отображениие выбранных товаров в корзине
 
 Содержит поля:
 
@@ -363,7 +339,7 @@ Mетоды:
 
 ### класс `FormsPopUp`
 
-Расширяет класс `ModalPopUp`. Отвечает за работу с полями ввода формы. При сабмите инициирует событие, передавая в него объект с данными из полей ввода формы. При изменении данных в поле ввода - инициирует событие изменения данных. Предоставляет методы для отображения ошибок и управления активностью кнопки сохранения. 
+Отвечает за работу с полями ввода формы. При сабмите инициирует событие, передавая в него объект с данными из полей ввода формы. При изменении данных в поле ввода - инициирует событие изменения данных. Предоставляет методы для отображения ошибок и управления активностью кнопки сохранения. 
 
 Содержит поля:
 
@@ -380,13 +356,13 @@ Mетоды:
 - `setError(data: { field: string, value: string, validInformation: string }): void;` принимает объект с данными для отображения или сокрытия текстов ошибок под полями ввода
 - `showInputError (field: string, errorMessage: string): void;` отображает полученный текст ошибки под указанным полем ввода
 - `hideInputError (field: string): void;` очищает текст ошибки под указанным полем ввода
-- `close (): void;` расширяет родительский метод дополнительно при закрытии очищая поля формы 
+- `close (): void;` закрывает модалку и очищает поля формы 
 - `get (form: HTMLElement);` геттер для получения элемента формы
 
 
 ### класс `SucessOrderPopup` 
 
-Расширяет класс `ModalPopUp`. Отвечает за отображение модального окна после успешного завершения заказа. 
+Отвечает за отображение модального окна после успешного завершения заказа. 
 
 Содержит поля: 
 - `submitButton: HTMLElement;` кнопка возврата к списку товаров

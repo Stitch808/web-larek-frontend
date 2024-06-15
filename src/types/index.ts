@@ -25,7 +25,6 @@ export interface IOrder {
     mail: string;
     total: number | null;
     items: IProduct[]
-    errors: FormErrors
 }
 
 //Ошибки в форме
@@ -69,8 +68,6 @@ export interface IExploreCard {
 export interface IListItem {
     items: TMainCards[]; //массив карточек на главной странице
     preview: string | null; //id открытой карточки
-    addItemToBasket(item: string, payload: Function | null): TBasket; //добавляем товар по id в корзину
-    deleteItemFromBasket(item: string, payload: Function | null): void; //удаляем товар по id из корзины
     showOneItem(item: string): void; //открываем карточку для просмотра по id 
     getItems(): IProduct[]; //получаем массив карточек с сервера
     saveItems(): IProduct[]; //сохраняем массив карточек
