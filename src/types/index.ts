@@ -53,8 +53,7 @@ export interface IOrderResult {
 
 //интерфейс корзины товаров
 export interface IBasket {
-    items: IProduct[];
-    total: number | null;
+    basket: TBasket[];
     resetBasket(): void; //очищение данных после успешного заказа
 }
 

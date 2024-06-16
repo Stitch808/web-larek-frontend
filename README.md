@@ -96,15 +96,14 @@ interface IOrder {
 ```
 interface IOrderResult {
     id: string
-    total: number
+    total: number | null;
 }
 ```
 
 Интерфейс корзины товаров
 ```
 interface IBasket {
-    items: IProduct[];
-    total: number | null;
+    basket: TBasket[];
     resetBasket(): void - очищение данных после успешного заказа
 }
 ```
@@ -200,8 +199,6 @@ type AppStateModal = "product" | "basket" | "order"
 
 Методы класса для взаимодействия с данными: 
 
-- `addItemToBasket(item: string, payload: Function | null): void;` добавляем товар по id в корзину
-- `deleteItemFromBasket(item: string, payload: Function | null): void;`  удаляем товар по id из корзины
 - `getBasketProducts(item: string): TBasket[]` - получение товаров в корзине
 - `showOneItem(item: string): IProduct;`  возвращает объект открытой карточки для просмотра по id 
 - `getCards(): IProduct[];`  получаем массив карточек с сервера
@@ -237,28 +234,16 @@ type AppStateModal = "product" | "basket" | "order"
 - `constructor(events: IEvents): void`
 
 Содержит поля: 
-- `_items: IProduct[];`  список товаров в корзине
-- `_total: number | null;` общая сумма товаров, добавленных в корзину
+- `basket: IProduct[];`  список товаров в корзине
 - `events: IEvents;` экземпляр класса EventEmitter для генерации событий при изменении данных (хранится в каждом классе)
 
 Методы класса для взаимодействия с данными: 
 
+- `addItemToBasket(item: string, payload: Function | null): void;` добавляем товар по id в корзину
+- `deleteItemFromBasket(item: string, payload: Function | null): void;`  удаляем товар по id из корзины
 - `getTotalPrice(): number | null` - получение стоимости всей корзины
 - `clearOrder(): void` - очищаем текущий заказ
 - `resetBasket(): void;` очищение данных после успешного заказа
-- функции `get(), set();`  для доступа и работы со свойствами объекта-инстанса этого класса
- 
-
-### класс `OrderData`
-
-Отвечает за работу с данными заказа\
-Функция-конструктор принимает инстанс брокера событий\
-
-- `constructor(events: IEvents): void`
-
-Методы класса для взаимодействия с данными: 
-
-- `createOrder(data: IOrder, payload: Function | null): void` отправка заказа 
 - функции `get(), set();`  для доступа и работы со свойствами объекта-инстанса этого класса
 
 ### Классы представлений
