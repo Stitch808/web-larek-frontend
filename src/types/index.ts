@@ -1,10 +1,12 @@
+import { IProductList } from "./productList";
+
 //Продукт
 export interface IProduct {
 	id: string;
 	description: string;
 	image: string;
 	title: string;
-	category: string;
+	category: ProductCategory;
 	price: number | null;
 }
 
@@ -24,7 +26,7 @@ export interface IOrder {
 	payment: string;
 	email: string;
 	total: number | null;
-	items: IProduct[]
+	items: string[]
 }
 
 //Ошибки в форме
@@ -49,6 +51,7 @@ export interface IUserData {
 export interface IOrderResult {
 	id: string;
 	total: number | null;
+	error: string
 }
 
 //интерфейс корзины товаров
@@ -105,11 +108,6 @@ export enum Events {
 	FORM_ERRORS_CHANGED = 'form:errors-changed', //показ(скрытие) ошибок формы
 	ORDER_OPEN = 'order:open', //открытие формы заказа
 	ORDER_CLEAR = 'order:clear', //очистка формы заказа
-	SET_PAYMENT_TYPE = 'order:set-payment-type', //выбор типа оплаты
-	FORM_PAYMENT_SUBMIT = 'form-payment:submit', //клик на кнопку далее в модальном окне со способом оплаты
 	FORM_USERDATA_SUBMIT = 'form-userdata:submit', // клик на кнопку далее в модальном окне с данными пользователя
-	FORM_PAYMENT_VALID = 'form-payment:validation', // событие необходимости валидации всей формы с данными способа оплаты (влияет на активность кнопки)
-	FORM_USERDATA_VALID = 'form-userdata:validation', // событие необходимости валидации всей формы с данными юзера (влияет на активность кнопки)
-	BASKET_VALID = 'basket:validation',
-    ADD_PRODUCT_TO_BASKET = "ADD_PRODUCT_TO_BASKET", // событие необходимости валидировать, что в корзине есть товары
+	SET_PAYMENT_TYPE = 'order: set_peyment-type' //выбор способа оплаты
 }

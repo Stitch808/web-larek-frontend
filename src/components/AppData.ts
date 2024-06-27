@@ -46,9 +46,8 @@ export class AppData extends Model<IAppData> {
 	}
 
 	removeProductFromBasket(product: IProduct) {
-		if (!this.basket.filter(item => item !== product)) {
-			this.emitChanges(Events.PRODUCT_DELETE_IN_BASKET)
-		}
+		this.basket = this.basket.filter(item => item !== product);
+        this.emitChanges(Events.BASKET_OPEN);
 	}
 
 	getTotalPrice() {

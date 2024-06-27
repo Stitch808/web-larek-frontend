@@ -23,6 +23,7 @@ export class ProductView extends Component<IProductView> {
     private _category: HTMLElement;
     private _price: HTMLElement;
     protected _button: HTMLButtonElement;
+    events: any;
 
     constructor(container: HTMLElement, actions: IProductActions) {
         super(container);
