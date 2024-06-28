@@ -6,13 +6,11 @@ import { OrderForm } from './components/OrderForm';
 import { PageView } from './components/PageView';
 import { ProductInBasketView, ProductView, ProductViewModal } from './components/Product';
 import { SuccessView } from './components/SuccessView';
-import { Api } from './components/base/api';
-import { EventEmitter, IEvents } from './components/base/events';
+import { EventEmitter } from './components/base/events';
 import { Modal } from './components/common/Modal';
 import './scss/styles.scss';
 import {Events, IOrder, IProduct} from "./types";
 import { API_URL, CDN_URL } from './utils/constants';
-import { testProduct } from './utils/tempConstants';
 import { cloneTemplate, createElement, ensureElement } from './utils/utils';
 
 

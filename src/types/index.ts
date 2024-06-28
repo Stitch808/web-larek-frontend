@@ -70,14 +70,9 @@ export type ListItem = {
     index: number
 }
 
-// Отображение продукта на главной странице
-type TMainCards = Omit<IProduct, "description">
 
 //тип для отображения товара в корзине
 export type TBasket = Pick<IProduct, 'id' | 'title' | 'price'>
-
-//тип для модалки сособ оплаты и адрес
-type TPayment = Pick<IOrder, 'payment' | 'address'>
 
 //тип для модалки контактные данные 
 type TContactInf = Pick<IOrder, 'email' | 'phone'>
@@ -85,8 +80,6 @@ type TContactInf = Pick<IOrder, 'email' | 'phone'>
 //выбор способа оплаты
 type OrderPayment = "online" | "cash"
 
-//тип открфтого модального окна 
-type AppStateModal = "card" | "basket" | "order"
 
 //модель
 export interface IAppData {
