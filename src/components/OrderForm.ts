@@ -15,19 +15,15 @@ export class OrderForm extends Form<IOrder> {
 
         this._inputAddress = container.querySelector<HTMLInputElement>('input[name="address"]');
 
-        this._buttonOnlinePayment.addEventListener('click', () => this.togglePaymentMethod('online'));
+        this._buttonOnlinePayment.addEventListener('click', () => this.togglePaymentMethod('card'));
         this._buttonCashPayment.addEventListener('click', () => this.togglePaymentMethod('cash'));
-    }
-
-    set payment(value: string) {
-        this.events.emit(Events.SET_PAYMENT_TYPE, { paymentType: value });
     }
 
     set address(value: string) {
         this._inputAddress.value = value;
     }
 
-    toggleOnline (state: boolean = true) {
+    toggleCard (state: boolean = true) {
         this.toggleClass(this._buttonOnlinePayment, 'button_alt-active', state);
     }
 
@@ -36,23 +32,27 @@ export class OrderForm extends Form<IOrder> {
     }
 
     togglePaymentMethod(selectedPayment: string) {
-        const isOnlineActive = this._buttonOnlinePayment.classList.contains('button_alt-active')
+        const isCardActive = this._buttonOnlinePayment.classList.contains('button_alt-active')
         const isCashActive = this._buttonCashPayment.classList.contains('button_alt-active')
 
-        if (selectedPayment === 'online') {
-            this.toggleOnline(!isOnlineActive);
-            this.payment = isOnlineActive ? null : 'online'
-            if (!isOnlineActive) {this.toggleOnline(false)}
+        if (selectedPayment === 'card') {
+            this.toggleCard(!isCardActive);
+            this.payment = isCardActive ? null : 'card'
+            if (!isCardActive) {this.toggleCash(false)}
         }
         else if (selectedPayment === 'cash') {
             this.toggleCash(!isCashActive);
             this.payment = isCashActive ? null : 'cash';
-            if (!isCashActive) {this.toggleCash(false)}
+            if (!isCashActive) {this.toggleCard(false)}
         }
     }
 
     resetPaymentButtons() {
-        this.toggleOnline(false);
+        this.toggleCard(false);
         this.toggleCash(false);
+    }
+
+    set payment(value: string) {
+        this.events.emit(Events.SET_PAYMENT_TYPE, { paymentType: value });
     }
 }
