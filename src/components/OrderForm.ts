@@ -15,8 +15,8 @@ export class OrderForm extends Form<IOrder> {
 
         this._inputAddress = container.querySelector<HTMLInputElement>('input[name="address"]');
 
-        this._buttonOnlinePayment.addEventListener('click', () => this.togglePaymentMethod('card'));
-        this._buttonCashPayment.addEventListener('click', () => this.togglePaymentMethod('cash'));
+        this._buttonOnlinePayment.addEventListener('click', () => this.togglePayment = 'card');
+        this._buttonCashPayment.addEventListener('click', () => this.togglePayment = 'cash');
     }
 
     set address(value: string) {
@@ -31,10 +31,9 @@ export class OrderForm extends Form<IOrder> {
         this.toggleClass(this._buttonCashPayment, 'button_alt-active', state);
     }
 
-    togglePaymentMethod(selectedPayment: string) {
+    set togglePayment(selectedPayment: string) {
         const isCardActive = this._buttonOnlinePayment.classList.contains('button_alt-active')
         const isCashActive = this._buttonCashPayment.classList.contains('button_alt-active')
-
         if (selectedPayment === 'card') {
             this.toggleCard(!isCardActive);
             this.payment = isCardActive ? null : 'card'

@@ -40,9 +40,28 @@ npm run build
 ```
 yarn build
 ```
+# Архитектура приложения
+
+**MVP**
+- Model (Модель) работает с данными, проводит вычисления и руководит всеми бизнес-процессами.
+- View (Вид или представление) показывает пользователю интерфейс и данные из модели.
+- Presenter (Представитель) служит прослойкой между моделью и видом.
+
+## Описание проекта
+Этот проект реализован с использованием архитектурного шаблона MVP (Model-View-Presenter). В проекте используется TypeScript для типизации данных и классов. Ниже описаны основные типы данных, модели, классы представления и события, используемые в проекте.
 
 ## Данные и типы данных, используемые в приложении
 
+### CategoryType
+Тип, описывающий категории товара.
+
+```
+- `другое`
+- `софт-скил`
+- `дополнительное`
+- `кнопка`
+- `хард-скил`
+```
 Данные карточки товара
 
 ```
@@ -63,19 +82,6 @@ type FormErrors = {
 	phone?: string;
 	address?: string;
 	payment?: string;
-}
-```
-
-Пользовательские данные
-
-```
-interface IUserData {
-    adress: string;
-    email: string;
-    phone: string;
-    payment: string;
-    getUserData(): IUserData; - данные пользователя для заказа
-    checkUserInfoValidation(data: Record<keyof TContactInf, string>): boolean; - проверка корректности данных пользователя
 }
 ```
 
@@ -101,38 +107,10 @@ interface IOrderResult {
 }
 ```
 
-Интерфейс корзины товаров
-```
-interface IBasket {
-    basket: TBasket[];
-    resetBasket(): void - очищение данных после успешного заказа
-}
-```
-
-Интерфейс открытой карточки товара для просмотра
-```
-interface IExploreCard {
-    items: IProduct[];
-    preview: string | null;
-}
-```
-
 Данные карточки, используемые в модальном окне корзины
 
 ```
 type TBasket = Pick<IProduct, 'id' | 'title' | 'price'>
-```
-
-выбор способа оплаты
-
-```
-type OrderPayment = "online" | "cash"
-```
-
-Контактные данные пользователя: почта и телефон
-
-```
-type TContactInf = Pick<IOrder, 'mail' | 'telephone'>
 ```
 
 ## Архитектура приложения
@@ -204,6 +182,7 @@ type TContactInf = Pick<IOrder, 'mail' | 'telephone'>
 - basket: IProduct[] - массив товаров в корзине
 - order: IOrder - заказ
 - selectedProduct: string | null - id товара для отображения в модальном окне
+- formErrors: FormErrors = {}
 
 Также класс предоставляет набор методов для взаимодействия с этими данными.
 
@@ -257,11 +236,16 @@ class Modal extends Component<IModalData> {
 #### Класс Form
 
 Общий класс для работы с формами, расширяет Component
+```
+class Form<T> extends Component<IFormState> {
+    protected _submit: HTMLButtonElement;
+    protected _errors: HTMLElement;
+```
 
 Основные методы:
 
 - `onInputChange` - изменение значений полей ввода
-- `set isButtonActive` - активна ли кнопка отправки
+- `set valid` - проверка валидации
 - `set errors` - установка текстов ошибок
 
 #### Класс BasketView

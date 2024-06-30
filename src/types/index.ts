@@ -1,5 +1,3 @@
-import { IProductList } from "./productList";
-
 //Продукт
 export interface IProduct {
 	id: string;
@@ -37,16 +35,6 @@ export type FormErrors = {
 	payment?: string;
 }
 
-//интерфейс для данных пользователя
-export interface IUserData {
-	adress: string;
-	email: string;
-	phone: string;
-	payment: string;
-	getUserData(): IUserData; //данные пользователя для заказа
-	checkUserInfoValidation(data: Record<keyof TContactInf, string>): boolean; //проверка корректности данных пользователя
-}
-
 //Результат заказа
 export interface IOrderResult {
 	id: string;
@@ -54,32 +42,12 @@ export interface IOrderResult {
 	error: string
 }
 
-//интерфейс корзины товаров
-export interface IBasket {
-	basket: TBasket[];
-	resetBasket(): void; //очищение данных после успешного заказа
-}
-
-//интерфейс открытой карточки товара для просмотра
-export interface IExploreCard {
-	items: IProduct[];
-	preview: string | null;
-}
-
 export type ListItem = {
     index: number
 }
 
-
 //тип для отображения товара в корзине
 export type TBasket = Pick<IProduct, 'id' | 'title' | 'price'>
-
-//тип для модалки контактные данные 
-type TContactInf = Pick<IOrder, 'email' | 'phone'>
-
-//выбор способа оплаты
-type OrderPayment = "online" | "cash"
-
 
 //модель
 export interface IAppData {
