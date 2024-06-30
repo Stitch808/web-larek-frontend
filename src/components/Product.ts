@@ -17,9 +17,28 @@ export interface IProductView {
     status: boolean
 }
 
-export class ProductView extends Component<IProductView> {
+export class ProductViewBase extends Component<IProductView> {
+    protected _title: HTMLElement;
+    protected _price: HTMLElement;
+
+    constructor(container: HTMLElement) {
+        super(container);
+
+        this._title = ensureElement<HTMLImageElement>('.card__title', container);
+        this._price = ensureElement<HTMLElement>('.card__price', container);
+    }
+
+    set title(value: string) {
+        this.setText(this._title, value);
+    }
+
+    set price(value: string) {
+        this.setText(this._price, value);
+    }
+}
+
+export class ProductView extends Component<IProductView | ProductViewBase> {
     private _image: HTMLImageElement;
-    private _title: HTMLElement;
     private _category: HTMLElement;
     private _price: HTMLElement;
     protected _button: HTMLButtonElement;
@@ -28,7 +47,6 @@ export class ProductView extends Component<IProductView> {
     constructor(container: HTMLElement, actions: IProductActions) {
         super(container);
 
-        this._title = ensureElement<HTMLElement>('.card__title', container);
         this._image = ensureElement<HTMLImageElement>('.card__image', container);
         this._category = ensureElement<HTMLElement>('.card__category', container);
         this._price = ensureElement<HTMLElement>('.card__price', container);
@@ -47,20 +65,12 @@ export class ProductView extends Component<IProductView> {
         this.setImage(this._image, value)
     }
 
-    set title(value: string) {
-        this.setText(this._title, value);
-    }
-
     set category(value: keyof typeof ProductCategory) {
         if (this.category) {
             this.setText(this._category, value);
             const categoryStyle = `card__category_${ProductCategory[value]}`
             this.toggleClass(this._category, categoryStyle, true);
         }
-    }
-
-    set price(value: number) {
-        this.setText(this._price, value)
     }
 
     set status(status: boolean) {
@@ -90,18 +100,15 @@ export class ProductViewModal extends ProductView {
     }
 }
 
-export class ProductInBasketView extends Component<TBasket | ListItem> {
+export class ProductInBasketView extends Component<ProductViewBase | TBasket | ListItem> {
     private _index: HTMLElement;
-    private _price: HTMLElement;
-    private _title: HTMLElement;
+
     private _button: HTMLButtonElement;
 
     constructor(container: HTMLElement, actions: IProductActions) {
         super(container);
 
         this._index = ensureElement<HTMLElement>('.basket__item-index', container);
-        this._title = ensureElement<HTMLImageElement>('.card__title', container);
-        this._price = ensureElement<HTMLElement>('.card__price', container);
         this._button = container.querySelector('.basket__item-delete');
 
         this._button.addEventListener('click', actions.onClick);
@@ -109,13 +116,5 @@ export class ProductInBasketView extends Component<TBasket | ListItem> {
 
     set index(value: string) {
         this.setText(this._index, value)
-    }
-
-    set price(value: string) {
-        this.setText(this._price, value)
-    }
-
-    set title(value: string) {
-        this.setText(this._title, value)
     }
 }
