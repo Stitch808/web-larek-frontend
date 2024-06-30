@@ -66,13 +66,13 @@ export class ProductView extends Component<IProductView | ProductViewBase> {
     }
 
     set category(value: keyof typeof ProductCategory) {
-        if (this.category) {
+        if (this._category) {
             this.setText(this._category, value);
-            const categoryStyle = `card__category_${ProductCategory[value]}`
+            const categoryStyle = `card__category_${ProductCategory[value]}`;
             this.toggleClass(this._category, categoryStyle, true);
         }
     }
-
+ 
     set status(status: boolean) {
         if (this._button) {
             if (this._price.textContent === "") {

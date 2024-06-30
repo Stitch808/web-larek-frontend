@@ -12,11 +12,11 @@ export interface IProduct {
 
 //Категории продуктов
 export enum ProductCategory {
-	'софт-скил' = 'soft',
-	'другое' = 'other',
-	'хард-скил' = 'hard',
-	'дополнительное' = 'additional',
-	'кнопка' = 'кнопка'
+    'софт-скил' = 'soft',
+    'другое' = 'other',
+    'хард-скил' = 'hard',
+    'дополнительное' = 'additional',
+    'кнопка' = 'кнопка'
 }
 
 //Заказ
