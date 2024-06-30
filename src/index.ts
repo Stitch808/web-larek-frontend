@@ -123,13 +123,12 @@ events.on(Events.BASKET_OPEN, () => {
         });
     })
     modal.render ({
-        content: createElement<HTMLElement>('div', {}, [
-            basketView.render({
+        content: basketView.render({
                 products,
                 total: appData.getTotalPrice()
             })
-        ])
-        })
+
+        }) 
 })
 
 //Удаляем продукт из корзины
