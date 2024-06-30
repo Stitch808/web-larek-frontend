@@ -166,6 +166,7 @@ events.on(Events.ORDER_OPEN, () => {
     }
 });
 
+//выбрали способ оплаты
 events.on(Events.SET_PAYMENT_TYPE, (data: { paymentType: string }) => {
     appData.setOrderField("payment", data.paymentType)
 })

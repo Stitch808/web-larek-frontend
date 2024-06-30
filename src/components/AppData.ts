@@ -92,41 +92,32 @@ export class AppData extends Model<IAppData> {
 		};
 	}
 
-	validateOrder(field: keyof IOrder) {
-		const errors: Partial<Record<keyof IOrder, string>> = {};
+    validateOrder(field: keyof IOrder) {
+        const errors: Partial<Record<keyof IOrder, string>> = {};
 
-		const emailError = !this.order.email.match(/^\S+@\S+\.\S+$/)
-		? 'email'
-		: '';
-		const phoneError = !this.order.phone.match(/^\+7\d{10}$/)
-		? 'телефон'
-		: '';
+        // Проверка для полей email и phone
+        if (field === 'email' || field === 'phone') {
+            const emailError = !this.order.email.match(/^\S+@\S+\.\S+$/)
+                ? 'email'
+                : '';
+            const phoneError = !this.order.phone.match(/^\+7\d{10}$/)
+                ? 'телефон'
+                : '';
 
-		if (field === "email" || field === "phone") {
-			if (emailError && phoneError) {
-				errors.email = `Необходимо указать ${emailError} и ${phoneError}`;
-			}
-			else if (emailError) {
-				errors.email = `Необходимо указать ${emailError}`;
-			}
-			else if (phoneError) {
-				errors.email = `Необходимо указать ${phoneError}`;
-			}
-		}
-		else if (field === "address" || field === "payment" ) {
-			if (!this.order.address && !this.order.payment) {
-				errors.email = `Необходимо указать адресс и способ оплаты`;
-			}
-			else if (!this.order.address) {
-				errors.email = `Необходимо указать адресс`;
-			}
-			else if (!this.order.payment) {
-				errors.email = `Необходимо указать способ оплаты`;
-			}
-		}
-		this.formErrors = errors;
-		this.events.emit(Events.FORM_ERRORS_CHANGED, this.formErrors);
-		return Object.keys(errors).length === 0;
-	}
+            if (emailError && phoneError) {
+                errors.email = `Необходимо указать ${emailError} и ${phoneError}`;
+            } else if (emailError) {
+                errors.email = `Необходимо указать ${emailError}`;
+            } else if (phoneError) {
+                errors.phone = `Необходимо указать ${phoneError}`;
+            }
+        } else if (!this.order.address) errors.address = 'Необходимо указать адрес';
+        else if (!this.order.payment)
+            errors.address = 'Необходимо выбрать тип оплаты';
+
+        this.formErrors = errors;
+        this.events.emit(Events.FORM_ERRORS_CHANGED, this.formErrors);
+        return Object.keys(errors).length === 0;
+    }
 
 }
