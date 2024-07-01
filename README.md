@@ -240,6 +240,7 @@ class Modal extends Component<IModalData> {
 class Form<T> extends Component<IFormState> {
     protected _submit: HTMLButtonElement;
     protected _errors: HTMLElement;
+}
 ```
 
 Основные методы:

@@ -100,7 +100,7 @@ export class AppData extends Model<IAppData> {
             const emailError = !this.order.email.match(/^\S+@\S+\.\S+$/)
                 ? 'email'
                 : '';
-            const phoneError = !this.order.phone.match(/^\+7\d{10}$/)
+            const phoneError = !this.order.phone.match(/^\+\d{1,3} \(\d{3}\) \d{3}-\d{2}-\d{2}$/) 
                 ? 'телефон'
                 : '';
 
