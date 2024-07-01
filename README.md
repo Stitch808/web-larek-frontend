@@ -173,7 +173,7 @@ type TBasket = Pick<IProduct, 'id' | 'title' | 'price'>
 
 #### Класс AppData
 
-Класс отвечает за хранение данных приложения \
+Реализует работу с моделью приложения. Суть класса, как и всего слоя, заключается в том, чтобы хранить информацию обо всем приложении, его состояниях и производить вычисления данных внутри. \
 Расширяет класс Model
 Все поля приватные, доступ через методы \
 В полях класса хранятся следующие данные:
@@ -275,6 +275,7 @@ class ProductView extends Component<IProduct>{
     private _category: HTMLElement;
     private _price: HTMLElement;
     protected _button: HTMLButtonElement;
+    private observers: ProductInBasketView[] = [];
 }
 ```
 
