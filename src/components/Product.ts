@@ -23,6 +23,7 @@ export class ProductView extends Component<IProductView> {
     private _category: HTMLElement;
     private _price: HTMLElement;
     protected _button: HTMLButtonElement;
+    private observers: ProductInBasketView[] = [];
 
     constructor(container: HTMLElement, actions: IProductActions) {
         super(container);
@@ -73,6 +74,15 @@ export class ProductView extends Component<IProductView> {
             }
         }
     }
+   
+    addObserver(observer: ProductInBasketView) {
+        this.observers.push(observer);
+    }
+    notifyObservers() {
+        this.observers.forEach(observer => {
+            observer.update();
+        });
+    }
 }
 
 export class ProductViewModal extends ProductView {
@@ -114,5 +124,9 @@ export class ProductInBasketView extends Component<TBasket | ListItem> {
 
     set title(value: string) {
         this.setText(this._title, value);
+    }
+
+    update() {
+        console.log("Обновление представления в корзине");
     }
 }

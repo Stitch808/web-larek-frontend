@@ -47,6 +47,12 @@ const successView = new SuccessView(cloneTemplate(successOrderTemplate), {
         events.emit(Events.ORDER_CLEAR);
     },
 });
+const productView = new ProductView(cloneTemplate(cardCatalogTemplate), {
+    onClick: () => {events.emit(Events.PRODUCT_OPEN_IN_MODAL);}
+});
+const productInBasketView = new ProductInBasketView(cloneTemplate(productInBasket), {
+    onClick: () => events.emit(Events.PRODUCT_DELETE_IN_BASKET)
+});;
 
 
 api.getProducts()
@@ -54,7 +60,6 @@ api.getProducts()
     .catch(err => {
         console.error(err);
     });
-
     
 //Изменились продукты на главной странице
 events.on<ProductsChangeEvent>(Events.PRODUCTS_CHANGED, () => {
@@ -106,6 +111,7 @@ events.on(Events.MODAL_CLOSE, () => {
 events.on(Events.ADD_BASKET, (product: IProduct) => {
     appData.addProductToBasket(product);
     pageView.basketCounter = appData.getBasket().length
+    productView.addObserver(productInBasketView);
     modal.close()
 })
 
