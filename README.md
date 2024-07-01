@@ -270,7 +270,11 @@ class BasketView extends Modal {
 
 ```
 class ProductView extends Component<IProduct>{
-  private product: TProduct
+    private _image: HTMLImageElement;
+    private _title: HTMLElement;
+    private _category: HTMLElement;
+    private _price: HTMLElement;
+    protected _button: HTMLButtonElement;
 }
 ```
 
@@ -279,7 +283,7 @@ class ProductView extends Component<IProduct>{
 
 ```
 class ProductModalView extends Modal {
-  private product: IProduct
+   private _description: HTMLElement;
 }
 ```
 
