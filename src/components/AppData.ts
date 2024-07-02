@@ -97,7 +97,7 @@ export class AppData extends Model<IAppData> {
 
         // Проверка для полей email и phone
         if (field === 'email' || field === 'phone') {
-            const emailError = !this.order.email.match(/^\S+@\S+\.\S+$/)
+            const emailError = !this.order.email
                 ? 'email'
                 : '';
             const phoneError = !this.order.phone
