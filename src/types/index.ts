@@ -1,74 +1,60 @@
-//Продукт
+// Тип категории товара
+export type CatalogItemStatus = {
+	category: 'софт-скил' | 'хард-скил' | 'другое' | 'кнопка' | 'дополнительное';
+};
+
+// Интерфейс, описывающий карточку товара
 export interface IProduct {
-	id: string;
-	description: string;
-	image: string;
-	title: string;
-	category: ProductCategory;
-	price: number | null;
+	id: string; // Уникальный идентификатор товара
+	description: string; // Описание товара
+	image: string; // URL изображения товара
+	title: string; // Название товара
+	category: string; // Категория товара
+	price: number | null; //Цена товара
 }
 
-//Категории продуктов
-export enum ProductCategory {
-    'софт-скил' = 'soft',
-    'другое' = 'other',
-    'хард-скил' = 'hard',
-    'дополнительное' = 'additional',
-    'кнопка' = 'кнопка'
+// Интерфейс для класса ContactsForm
+export interface IOrderForm {
+	email: string; // Электронный адрес пользователя
+	phone: string; // Номер телефона пользователя
 }
 
-//Заказ
-export interface IOrder {
-	address: string;
-	phone: string;
-	payment: string;
-	email: string;
-	total: number | null;
-	items: string[]
+// Интерфейс для класса Order
+export interface IOrderContact {
+	payment: string; // Способ оплаты
+	address: string; // Адрес доставки
 }
 
-//Ошибки в форме
-export type FormErrors = {
-	email?: string;
-	phone?: string;
-	address?: string;
-	payment?: string;
+// Интерфейс IOrder, расширяющий IOrderForm и IOrderContact
+export interface IOrder extends IOrderForm, IOrderContact {
+	total: number; // Общая сумма заказа
+	items: string[]; // Массив строк, представляющий идентификаторы или описания товаров, включенных в заказ
 }
 
-//Результат заказа
-export interface IOrderResult {
-	id: string;
-	total: number | null;
-	error: string
+// Интерфейс для создание заказа
+export interface IOrderAnswer {
+	total: number; // идентификатор заказа
 }
 
-export type ListItem = {
-    index: number
+// Интерфейс для класса AppState
+export interface IAppState {
+	catalog: IProduct[]; // Массив товаров в корзине
+	basket: string[]; // Каталог товаров
+	order: IOrder; // Текущий заказ
 }
 
-//тип для отображения товара в корзине
-export type TBasket = Pick<IProduct, 'id' | 'title' | 'price'>
-
-//модель
-export interface IAppData {
-	products: IProduct[]
-	basket: IProduct[]
-	order: IOrder
+// Интерфейс для работы с API магазина
+export interface IStoreApi {
+	getProductList: () => Promise<IProduct[]>; // Получение списка всех продуктов, доступных в магазине
+	orderProduct: (value: IOrder) => Promise<IOrderAnswer>; // Отправка заказа на сервер
 }
 
-export enum Events {
-	PRODUCTS_CHANGED = 'products:changed', //изменение массива карточек
-	PRODUCT_OPEN_IN_MODAL = 'product:preview', //открытие модалки с товаром
-	USER_CHANGED  = 'userData:changed', //изменение данных пользователя при заполнении формы
-	ADD_BASKET = 'basket:add-product', //добавление товара в корзину
-	BASKET_REMOVE = 'basket:remove-product', //удаление товара из корзины
-	MODAL_CLOSE = 'modal:close', //клик на иконку закрытия модального окна/клик на кнопку в модальном окне успешного заказа для перехода на главную
-	MODAL_OPEN = 'modal:open', //открытие модалки
-	BASKET_OPEN = 'basket:open',//открытие корзины пользователя
-	PRODUCT_DELETE_IN_BASKET = 'product:delete', //клик на иконку удаление товара из корзины
-	FORM_ERRORS_CHANGED = 'form:errors-changed', //показ(скрытие) ошибок формы
-	ORDER_OPEN = 'order:open', //открытие формы заказа
-	ORDER_CLEAR = 'order:clear', //очистка формы заказа
-	FORM_USERDATA_SUBMIT = 'form-userdata:submit', // клик на кнопку далее в модальном окне с данными пользователя
-	SET_PAYMENT_TYPE = 'order: set_peyment-type' //выбор способа оплаты
+// Интерфейс для класса Page
+export interface IPage {
+	counter: HTMLElement; // Счетчик на странице
+	catalog: HTMLElement; //Каталог товаров или элементов
+	basket: HTMLElement; // Отображение корзины
 }
+
+//Тип **FormErrors**, который используется для представления ошибок формы
+export type FormErrors = Partial<Record<keyof IOrder, string>>;
