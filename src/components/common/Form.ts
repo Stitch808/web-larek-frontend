@@ -1,5 +1,5 @@
-import { Component } from '../base/Component';
-import { IEvents } from '../base/events';
+import { View } from '../base/Component';
+import { EventEmitter } from '../base/events';
 import { ensureElement } from '../../utils/utils';
 
 interface IFormState {
@@ -7,12 +7,12 @@ interface IFormState {
 	errors: string[];
 }
 
-export class Form<T> extends Component<IFormState> {
+export class Form<T> extends View<IFormState> {
 	protected _submit: HTMLButtonElement;
 	protected _errors: HTMLElement;
 
-	constructor(protected container: HTMLFormElement, protected events: IEvents) {
-		super(container);
+	constructor(protected container: HTMLFormElement, protected events: EventEmitter) {
+		super(events, container);
 
 		this._submit = ensureElement<HTMLButtonElement>(
 			'button[type=submit]',
@@ -41,7 +41,7 @@ export class Form<T> extends Component<IFormState> {
 	}
 
 	set valid(value: boolean) {
-		this.setDisabled(this._submit, !value);
+		this._submit.disabled = !value;
 	}
 
 	set errors(value: string) {

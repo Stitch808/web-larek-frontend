@@ -2,6 +2,7 @@ import { Component } from './base/Component';
 import { ensureElement } from './../utils//utils';
 
 interface ISuccess {
+	id: string;
 	total: number;
 }
 

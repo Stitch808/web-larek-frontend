@@ -40,6 +40,8 @@ export class Api {
 			...this.options,
 			method,
 			body: JSON.stringify(data),
-		}).then(this.handleResponse);
+		})
+		.then(this.handleResponse) ;
+		
 	}
 }
