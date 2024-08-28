@@ -25,10 +25,7 @@ export class LarekApi extends Api implements LarekAPI {
 	}
 
 	orderProduct(value: IOrder): Promise<IOrderResult> {
-		if (value.items.length === 0) {
-			throw new Error('No products specified in the order');
-		  }
-		console.log('Sending order to server:', value);
+		console.log('Вывод инфы о заказе:', value);
 		return this.post('/order', value).then(
 			(data: IOrderResult) => data,
 		);

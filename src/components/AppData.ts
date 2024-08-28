@@ -1,5 +1,12 @@
 import { IEvents } from './base/events';
-import {IBasket, IOrder, IProduct, OrderForm, PaymentMethod, FormErrors} from '../types/index';
+import {
+	IBasket,
+	IOrder,
+	IProduct,
+	OrderForm,
+	PaymentMethod,
+	FormErrors,
+} from '../types/index';
 
 export type CatalogChangeEvent = {
 	catalog: IProduct[];
@@ -11,8 +18,9 @@ export class AppData {
 	catalog: IProduct[];
 	basket: IBasket = {
 		items: [],
-		total: 0
+		total: 0,
 	};
+
 	order: IOrder = {
 		total: 0,
 		items: [],
@@ -21,11 +29,10 @@ export class AppData {
 		email: '',
 		phone: '',
 	};
+
 	formErrors: FormErrors = {};
 
-	constructor(protected events: IEvents) {
-
-	}
+	constructor(protected events: IEvents) {}
 
 	setItems(items: IProduct[]) {
 		this.items = items;
@@ -38,7 +45,7 @@ export class AppData {
 	}
 
 	inBasket(item: IProduct) {
-		return this.basket.items.includes(item)
+		return this.basket.items.includes(item);
 	}
 
 	addToBasket(item: IProduct) {
@@ -53,7 +60,7 @@ export class AppData {
 	}
 
 	removeFromBasket(item: IProduct) {
-		this.basket.items = this.basket.items.filter(id => id !== item)
+		this.basket.items = this.basket.items.filter((id) => id !== item);
 		this.basket.total -= item.price;
 		this.events.emit('basket:changed', this.basket);
 	}
@@ -65,15 +72,15 @@ export class AppData {
 		this.events.emit('basket:changed', this.basket);
 	}
 
-	getTotalPrice() { 
+	getTotalPrice() {
 		return this.basket.items.reduce((a, b) => a + b.price, 0);
 	}
 
 	setOrderField(field: keyof OrderForm, value: string) {
 		this.order[field] = value;
 		this.basket.items.map((item) => ({ id: item, quantity: 1 }));
-		this.order.total = this.getTotalPrice(); 
-		
+		this.order.total = this.getTotalPrice();
+
 		if (this.validateOrderForm()) {
 			this.events.emit('order:ready', this.order);
 		}
@@ -117,5 +124,4 @@ export class AppData {
 		this.events.emit('formErrors:change', this.formErrors);
 		return Object.keys(errors).length === 0;
 	}
-
 }
