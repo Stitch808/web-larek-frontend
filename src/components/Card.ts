@@ -6,8 +6,6 @@ interface ICardActions {
 	onClick: (event: MouseEvent) => void;
 }
 
-type CardModifier = 'compact' | 'full';
-
 export class Card extends Component<IProduct> {
 	protected _title: HTMLElement;
 	protected _image?: HTMLImageElement;

@@ -56,127 +56,58 @@ yarn build
 - Интерфейс, описывающий карточку товара:
 
 ```ts
-interface IProduct {
-	id: string; // Уникальный идентификатор товара
-	name: string; //Название товара
-	description: string; //Описание товара
-	price: number; //Цена товара
-	image: string; //URL изображения товара
-	category: string; // Категория товара
+export interface IProduct {
+	id: string;
+	description?: string;
+	image: string;
+	name: string;
+	category: string;
+	price: number | null;
 }
 ```
 
 - Интерфейс для класса Basket:
 
 ```ts
-interface IBasket {
-	items: HTMLElement[]; // Массив элементов, представляющих товары в корзине
-	price: number; // Общая цена товаров в корзине
+export interface IBasket {
+	items: IProduct[];
+	total: number; 
 }
 ```
 
-- Интерфейс для класса ContactsForm:
+- Интерфейс заказа:
 
 ```ts
-interface IOrderForm {
-	email: string; //Электронный адрес пользователя
-	phone: string; //Номер телефона пользователя
+export interface IOrder {
+	address: string;
+	phone: string;
+	payment: string;
+	email: string;
+	total: number;
+	items: string[]
 }
 ```
 
-- Интерфейс для класса Order:
+- Интерфейс результата заказа:
   
 ```ts 
-interface IOrderContact {
-	payment: string; // Способ оплаты
-	address: string; // Адрес доставки
+export interface IOrderResult {
+	id: string;
+	total: number;
 }
 ```
 
-- Интерфейс IOrder, расширяющий IOrderForm и IOrderContact:
+
+- Интерфейс для выбора способа оплаты и адреса:
 
 ```ts
-interface IOrder extends IOrderForm {
-	items: string[]; // Массив строк, представляющий идентификаторы или описания товаров, включенных в заказ
+export interface IPaymentAndAddressForm {
+	address: string,
+	paymentType: string,
 }
 ```
 
-- Интерфейс для класса Card:
 
-```ts
-interface ICard {
-	id: string; //Уникальный идентификатор карточки
-	title: string; //Заголовок карточки
-	category: string; //Категория, к которой относится карточка
-	description: string; //Текст, отображаемый на карточке
-	image: string; // URL изображения, отображаемого на карточке
-}
-```
-
-- Интерфейс для класса Page:
-
-```ts
-interface IPage {
-	counter: number; //Счетчик на странице
-	catalog: HTMLElement[]; //Каталог товаров или элементов
-	basket: HTMLElement; // Отображение корзины
-}
-```
-
-- Интерфейс для класса AppState:
-
-```ts
-interface IAppState {
-	basket: Product[]; // Массив товаров в корзине
-	order: IOrder; // Текущий заказ
-	catalog: Product[]; // Каталог товаров
-}
-```
-
-- Интерфейс для класса EventEmitter:
-
-```ts
-interface IEvents {
-	on<T extends object>(event: EventName, callback: (data: T) => void): void;
-	emit<T extends object>(event: string, data?: T): void;
-	trigger<T extends object>(
-		event: string,
-		context?: Partial<T>
-	): (data: T) => void;
-}
-```
-
-- Интерфейс для класса Form:
-
-```ts
-interface IFormState {
-	valid: boolean; // Флаг валидности формы
-	errors: string[]; // Массив строк с ошибками
-}
-```
-
-- Интерфейс для создание заказа:
-  
- ```ts
-interface IOrderAnswer {
-	total: number; // идентификатор заказа
-}
-```
-
-- Интерфейс для работы с API магазина:
-  
-```ts
-export interface IStoreApi {
-	getProductList: () => Promise<IProduct[]>; // Получение списка всех продуктов, доступных в магазине
-	orderProduct: (value: IOrder) => Promise<IOrderAnswer>; // Отправка заказа на сервер
-}
-```
-
-- Тип **FormErrors**, который используется для представления ошибок формы:
-
-```ts
-type FormErrors = Partial<Record<keyof IOrder, string>>;
-```
 ---
  #_Базовые классы:_ 
 
@@ -188,6 +119,9 @@ class Api {
 	//Конструктор класса принимает базовый URL и дополнительные опции для запросов
 	constructor(baseUrl: string, options: RequestInit = {});
 
+	//тип выбора метода
+	type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
+
 	//Метод, который обрабатывает ответы от сервера
 	protected async handleResponse(response: Response): Promise<Partial<object>>;
 
@@ -195,7 +129,7 @@ class Api {
 	async get(uri: string);
 
 	// Post запрос
-	async post(uri: string, data: object);
+	async post(uri: string, data: object, method: ApiPostMethods);
 }
 ```
 
@@ -204,8 +138,10 @@ class Api {
 
 ```ts
 class EventEmitter implements IEvents {
-    //Конструктор инициализирует пустую карту событий
-	constructor()ж
+    
+	constructor() {
+		this._events = new Map<EventName, Set<Subscriber>>();
+	}
 
 	//Подписывает обработчик на событие
 	on<T extends object>(eventName: EventName, callback: (event: T) => void);
@@ -270,51 +206,66 @@ abstract class Model<T> {
 ---
 #_Слой данных:_
 
-- **AppState**
-Класс, описывающий состояние приложения, наследуется от Model:
+- **AppData**
+Класс, описывающий состояние приложения:
 
 ```ts
-class AppState extends Model<IAppState> {
-	basket: Product[];
-	order: IOrder;
-	catalog: Product[];
-	formErrors: FormErrors;
+class AppData {
+	items: IProduct[] = [];
+	preview: IProduct = null;
+	catalog: IProduct[];
+	basket: IBasket = {
+		items: [],
+		total: 0,
+	};
+
+	order: IOrder = {
+		total: 0,
+		items: [],
+		payment: '',
+		address: '',
+		email: '',
+		phone: '',
+	};
+
+	formErrors: FormErrors = {};
+
+	// Метод для получения католог товаров
+	setItems();
+
+	// Метод для получения превью продукта
+	setPreview();
+
+    // Метод для проверки, содержится ли товар в корзине
+	inBasket();
 
 	// Метод для добавления товара в корзину
 	addToBasket();
+
+	// Метод для добавления идентификатора товара в заказ
+    addOrderID();
+
+	// Метод для удаления товара из корзины
+	removeFromBasket();
 
 	// Метод для полной очистки корзины
 	clearBasket();
 
 	// Метод для получения общей суммы заказа
-	getTotal();
-
-	// Метод для установки каталога товаров
-	setCatalog();
-
-	// Метод для валидации заказа
-	validateOrderform();
+	getTotalPrice();
 
 	// Метод для установки поля заказа
 	setOrderField();
 
-    // Метод для добавления идентификатора товара в заказ
-    addOrderID();
-
-    // Метод для удаления идентификатора товара из заказа
-	removeOrderID();
-
-    // Метод для удаления товара из корзины
-	removeBasket();
-
-    // Метод для установки поля контакта
+	// Метод для установки поля контакта
 	setContactsField();
 
-    // Метод для проверки, содержится ли товар в корзине
-	containsProduct(); 
+	// Метод для валидации заказа
+	validateOrderForm();
 
     // Метод для валидации формы контакта
     validateContactsForm();
+
 }
 ```
 ---
@@ -324,12 +275,9 @@ class AppState extends Model<IAppState> {
 Класс, представляющий корзину пользователя. Содержит список товаров, добавленных пользователем, и методы для добавления и удаления товаров:
 
 ```ts
-class Basket extends Component<IBasket> {
-	// Конструктор класса, который принимает контейнер и EventEmitter
-	constructor(container: HTMLElement, protected events: EventEmitter);
-
-	// Сеттер для установки выбранных элементов в корзине
-	set selected();
+class Basket extends View<IBasketView>  {
+	// Конструктор класса, который принимает EventEmitter
+	constructor(events: EventEmitter) 
 
 	// Сеттер для установки списка элементов в корзине
 	set items();
@@ -343,9 +291,9 @@ class Basket extends Component<IBasket> {
 Класс представляет собой компонент формы, который наследуется от базового класса Component и реализует дополнительные методы для управления состоянием и валидацией формы:
 
 ```ts
-class Form<T> extends Component<IFormState> {
+export class Form<T> extends View<IFormState>  {
 	// Конструктор класса, который принимает контейнер формы и и обработчик событий
-	constructor(protected container: HTMLFormElement, protected events: IEvents);
+	constructor(protected container: HTMLFormElement, protected events: EventEmitter);
 
 	// Метод, который вызывается при изменении поля ввода
 	protected onInputChange();
@@ -367,16 +315,17 @@ class Form<T> extends Component<IFormState> {
 Класс является подклассом Component и представляет карточку в пользовательском интерфейсе:
 
 ```ts
-class Card extends Component<ICard> {
-	//Конструктор класса принимает один параметр, элемент HTML, в котором будет отображаться карточка
-	constructor(container: HTMLElement);
+class Card extends Component<IProduct>  {
+	//Конструктор класса принимает элемент HTML, в котором будет отображаться карточка, и обработчик событий
+	constructor(container: HTMLElement, actions?: ICardActions);
 
 	// Сеттер и геттер для идентификатора карточки
 	set id();
 	get id();
 
-	// Сеттер для заголовка карточки
+	// Сеттер и геттер  для заголовка карточки
 	set title();
+	get title();
 	
 	// Сеттер для изображения, отображаемое на карточке
 	set image();
@@ -386,22 +335,14 @@ class Card extends Component<ICard> {
 
 	//Сеттер для категории, к которой относится карточка
 	set category(): void;
-}
-```
-- **CardView**
- Класс является подклассом Card и представляет собой компонент, который отвечает за отображение и взаимодействие с карточкой товара в пользовательском интерфейсе:
 
-```ts
-class CardView extends Card {
-    // Конструктор класса принимает контейнер, в котором будет отрисовываться карточка, и объект для обработки событий
-	constructor(container: HTMLElement, actions?: ICardActions);
-
-    // Сеттер для установки индекса карточки
-	set index();
-
-    //Сеттер и гетер для текста, отображаемого на карточке
+	//Сеттер для текста, отображаемого на карточке
 	set description(); 
+
+	//Сеттер для текста, отображаемого на кнопке
+	set button(); 
 }
+
 ```
 
 - **Page**
@@ -416,7 +357,7 @@ class Page extends Component<IPage> {
 	set counter();
 
 	//Сеттер для установки элементов магазина
-	set store();
+	set catalog();
 
 	//Сеттер для блокировки или разблокировки страницы
 	set locked();
@@ -427,9 +368,9 @@ class Page extends Component<IPage> {
 Класс, представляющий заказ пользователя. Содержит информацию о пользователе, список товаров в заказе и статус заказа:
 
 ```ts
-class Order extends Form<IOrderForm> {
+class Order extends Form<OrderForm> {
 	// Конструктор класса, который принимает контейнер формы и обработчик событий
-	constructor(container: HTMLFormElement, events: IEvents);
+	constructor(container: HTMLFormElement, events: EventEmitter);
 
 	// Сеттер для выбора оплаты
 	set payment();
@@ -443,9 +384,7 @@ class Order extends Form<IOrderForm> {
 Класс является подклассом Form и представляет собой компонент, который отвечает за взаимодействие с формой контактов в пользовательском интерфейсе:
 
 ```ts
-class ContactsForm extends Form<IOrderForm> {
-	// Конструктор класса принимает контейнер формы и обработчик событий
-	constructor(container: HTMLFormElement, events: IEvents)
+class ContactsForm extends Form<OrderForm> {
 
     // Сеттер для установки значения поля ввода телефона
 	set phone()
@@ -455,11 +394,11 @@ class ContactsForm extends Form<IOrderForm> {
 }
 ```
 
-- **StoreAPI**
+- **LarekApi**
  Класс является подклассом Api и реализует интерфейс IStoreApi. Он отвечает за взаимодействие с сервером, предоставляя методы для получения списка товаров и отправки заказа:
 
 ```ts
-class StoreAPI extends Api implements IStoreApi {
+class LarekApi extends Api implements LarekAPI{
 	// Конструктор класса, который принимает базовый URL, и объект для настройки запросов:
 	constructor(cdn: string, baseUrl: string, options?: RequestInit);
 

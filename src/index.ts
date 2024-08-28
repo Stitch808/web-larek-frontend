@@ -10,7 +10,7 @@ import { Page } from './components/Page';
 import { Modal } from './components/common/Modal';
 import { Order } from './components/Order';
 import { IOrder, IProduct, OrderForm,  } from './types';
-import { ContactsForm } from './components/Contacts';
+import { ContactsForm } from './components/ContactsForm';
 import { Basket } from './components//Basket';
 import { Success } from './components//Success';
 
