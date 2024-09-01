@@ -112,19 +112,19 @@ events.on('order:ready', (order: IOrder) => {
 
 // Форма заказа
 events.on('order:open', () => {
-	modal.render({
-		content: orderForm.render({
-			payment: '',
-			address: '',
-			valid: false,
-			errors: [],
-		}),
-	});
+		modal.render({
+			content: orderForm.render({
+				payment: '',
+				address: '',
+				valid: false,
+				errors: [],
+			}),
+		});
 });
 
 // Форма с контактами
 events.on('order:submit', () => {
-	appData.order.total = appData.getTotalPrice();
+	appData.basket.total = appData.getTotalPrice();
 	modal.render({
 		content: contactsForm.render({
 			email: '',
@@ -185,6 +185,7 @@ events.on('contacts:submit', () => {
 	.catch(err => {
 		console.error(err)
 	});
+	appData.clearOrder()
 });
 
 // Получаем карточки с сервера

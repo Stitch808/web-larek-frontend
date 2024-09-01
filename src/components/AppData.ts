@@ -51,12 +51,7 @@ export class AppData {
 	addToBasket(item: IProduct) {
 		this.basket.items.push(item);
 		this.basket.total += item.price;
-		this.addOrderID(item);
 		this.events.emit('basket:changed', this.basket);
-	}
-
-	addOrderID(item: IProduct) {
-		this.order.items.push(item.id);
 	}
 
 	removeFromBasket(item: IProduct) {
@@ -67,9 +62,16 @@ export class AppData {
 
 	clearBasket() {
 		this.basket.items = [];
-		this.basket.total = 0;
+		this.order.total = 0;
 		this.order.items = [];
 		this.events.emit('basket:changed', this.basket);
+	}
+
+	clearOrder() {
+		this.order.payment = '';
+		this.order.address = '';
+		this.order.email = '';
+		this.order.phone = ''
 	}
 
 	getTotalPrice() {
@@ -78,10 +80,11 @@ export class AppData {
 
 	setOrderField(field: keyof OrderForm, value: string) {
 		this.order[field] = value;
-		this.basket.items.map((item) => ({ id: item, quantity: 1 }));
-		this.order.total = this.getTotalPrice();
+		
 
 		if (this.validateOrderForm()) {
+			this.order.items = this.basket.items.map(item => item.id);
+			this.order.total = this.getTotalPrice();
 			this.events.emit('order:ready', this.order);
 		}
 	}
