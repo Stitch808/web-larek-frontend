@@ -102,7 +102,7 @@ events.on('basket:changed', () => {
 		return card.render(item);
 	});
 
-	basket.total = appData.basket.total
+	basket.total = appData.getTotalPrice();
 });
 
 // начинаем оформлять заказ
@@ -124,7 +124,7 @@ events.on('order:open', () => {
 
 // Форма с контактами
 events.on('order:submit', () => {
-	appData.basket.total = appData.getTotalPrice();
+	basket.total = appData.getTotalPrice();
 	modal.render({
 		content: contactsForm.render({
 			email: '',
@@ -168,8 +168,11 @@ events.on('payment:change', (item: HTMLButtonElement) => {
 
 // Логика отправки заказа
 events.on('contacts:submit', () => {
+	const orderItems = appData.basket.items.map(item => item.id);
+  	const orderTotal = appData.getTotalPrice();
+  	const orderData = { ...appData.order, items: orderItems, total: orderTotal };
 	api
-	.orderProduct(appData.order)
+	.orderProduct(orderData)
 	.then((result) => {
 		const success = new Success(cloneTemplate(ensureElement<HTMLTemplateElement>('#success')), {
 			onClick: () => {

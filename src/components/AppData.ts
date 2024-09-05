@@ -4,26 +4,35 @@ import {
 	IOrder,
 	IProduct,
 	OrderForm,
-	PaymentMethod,
 	FormErrors,
 } from '../types/index';
+import { Model } from './base/Model';
 
 export type CatalogChangeEvent = {
 	catalog: IProduct[];
 };
 
-export class AppData {
+export class AppDataModel extends Model<{
+	items: IProduct[];
+	preview: IProduct;
+	catalog: IProduct[];
+	basket: IBasket;
+	order: IOrder;
+	formErrors: FormErrors;
+  }> {
+
+  }
+
+	export class AppData extends AppDataModel {
+		
 	items: IProduct[] = [];
 	preview: IProduct = null;
 	catalog: IProduct[];
 	basket: IBasket = {
 		items: [],
-		total: 0,
 	};
 
 	order: IOrder = {
-		total: 0,
-		items: [],
 		payment: '',
 		address: '',
 		email: '',
@@ -32,7 +41,9 @@ export class AppData {
 
 	formErrors: FormErrors = {};
 
-	constructor(protected events: IEvents) {}
+	constructor(protected events: IEvents) {
+		super({}, events);
+	}
 
 	setItems(items: IProduct[]) {
 		this.items = items;
@@ -50,20 +61,16 @@ export class AppData {
 
 	addToBasket(item: IProduct) {
 		this.basket.items.push(item);
-		this.basket.total += item.price;
 		this.events.emit('basket:changed', this.basket);
 	}
 
 	removeFromBasket(item: IProduct) {
 		this.basket.items = this.basket.items.filter((id) => id !== item);
-		this.basket.total -= item.price;
 		this.events.emit('basket:changed', this.basket);
 	}
 
 	clearBasket() {
 		this.basket.items = [];
-		this.order.total = 0;
-		this.order.items = [];
 		this.events.emit('basket:changed', this.basket);
 	}
 
@@ -83,9 +90,9 @@ export class AppData {
 		
 
 		if (this.validateOrderForm()) {
-			this.order.items = this.basket.items.map(item => item.id);
-			this.order.total = this.getTotalPrice();
-			this.events.emit('order:ready', this.order);
+			const orderItems = this.basket.items.map(item => item.id);
+			const orderTotal = this.getTotalPrice();
+			this.events.emit('order:ready', { ...this.order, items: orderItems, total: orderTotal });
 		}
 	}
 

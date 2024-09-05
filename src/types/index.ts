@@ -9,7 +9,6 @@ export interface IProduct {
 
 export interface IBasket {
 	items: IProduct[];
-	total: number; 
 }
 
 export interface IOrder {
@@ -17,8 +16,7 @@ export interface IOrder {
 	phone: string;
 	payment: string;
 	email: string;
-	total: number;
-	items: string[]
+	
 }
 
 export interface IPaymentAndAddressForm {

@@ -230,6 +230,9 @@ class AppData {
 
 	formErrors: FormErrors = {};
 
+	//Конструктор класса принимает объект, который содержит обработчики событий для модели
+	constructor(protected events: IEvents) {}
+
 	// Метод для получения католог товаров
 	setItems();
 
