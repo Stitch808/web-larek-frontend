@@ -8,22 +8,7 @@ import {
 } from '../types/index';
 import { Model } from './base/Model';
 
-export type CatalogChangeEvent = {
-	catalog: IProduct[];
-};
-
-export class AppDataModel extends Model<{
-	items: IProduct[];
-	preview: IProduct;
-	catalog: IProduct[];
-	basket: IBasket;
-	order: IOrder;
-	formErrors: FormErrors;
-  }> {
-
-  }
-
-	export class AppData extends AppDataModel {
+	export class AppData extends Model<IOrder> {
 		
 	items: IProduct[] = [];
 	preview: IProduct = null;
@@ -87,7 +72,6 @@ export class AppDataModel extends Model<{
 
 	setOrderField(field: keyof OrderForm, value: string) {
 		this.order[field] = value;
-		
 
 		if (this.validateOrderForm()) {
 			const orderItems = this.basket.items.map(item => item.id);

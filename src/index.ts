@@ -29,6 +29,11 @@ const basket = new Basket(events);
 const orderForm = new Order (cloneTemplate<HTMLFormElement>('#order'), events);
 const contactsForm = new ContactsForm(cloneTemplate(ensureElement<HTMLTemplateElement>('#contacts')), events)
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
+const success = new Success(cloneTemplate(ensureElement<HTMLTemplateElement>('#success')), {
+	onClick: () => {
+	  modal.close();
+	}
+  });
 
 // Дальше идет бизнес-логика
 
@@ -174,11 +179,7 @@ events.on('contacts:submit', () => {
 	api
 	.orderProduct(orderData)
 	.then((result) => {
-		const success = new Success(cloneTemplate(ensureElement<HTMLTemplateElement>('#success')), {
-			onClick: () => {
-				modal.close();
-			}
-		});
+		
 		modal.render({
 			content: success.render({id: result.id, total: result.total}),
 			

@@ -116,6 +116,9 @@ export interface IPaymentAndAddressForm {
 
 ```ts
 class Api {
+	readonly baseUrl: string;
+	protected options: RequestInit;	
+
 	//Конструктор класса принимает базовый URL и дополнительные опции для запросов
 	constructor(baseUrl: string, options: RequestInit = {});
 
@@ -210,18 +213,15 @@ abstract class Model<T> {
 Класс, описывающий состояние приложения:
 
 ```ts
-class AppData {
+export class AppData extends Model<IOrder> {
 	items: IProduct[] = [];
 	preview: IProduct = null;
 	catalog: IProduct[];
 	basket: IBasket = {
 		items: [],
-		total: 0,
 	};
 
 	order: IOrder = {
-		total: 0,
-		items: [],
 		payment: '',
 		address: '',
 		email: '',
@@ -233,20 +233,20 @@ class AppData {
 	//Конструктор класса принимает объект, который содержит обработчики событий для модели
 	constructor(protected events: IEvents) {}
 
-	// Метод для получения католог товаров
-	setItems();
+	// Метод для получения католога товаров
+	setItems(items: IProduct[]);
 
 	// Метод для получения превью продукта
-	setPreview();
+	setPreview(item: IProduct);
 
     // Метод для проверки, содержится ли товар в корзине
-	inBasket();
+	inBasket(item: IProduct);
 
 	// Метод для добавления товара в корзину
-	addToBasket();
+	addToBasket(item: IProduct);
 
 	// Метод для удаления товара из корзины
-	removeFromBasket();
+	removeFromBasket(item: IProduct);
 
 	// Метод для полной очистки корзины
 	clearBasket();
@@ -258,10 +258,10 @@ class AppData {
 	getTotalPrice();
 
 	// Метод для установки поля заказа
-	setOrderField();
+	setOrderField(field: keyof OrderForm, value: string);
 
 	// Метод для установки поля контакта
-	setContactsField();
+	setContactsField(field: keyof OrderForm, value: string);
 
 	// Метод для валидации заказа
 	validateOrderForm();
@@ -279,14 +279,18 @@ class AppData {
 
 ```ts
 class Basket extends View<IBasketView>  {
+	protected _list: HTMLElement;
+	protected _total: HTMLElement;
+	protected button: HTMLElement;
+	static template = ensureElement<HTMLTemplateElement>('#basket')
 	// Конструктор класса, который принимает EventEmitter
 	constructor(events: EventEmitter) 
 
 	// Сеттер для установки списка элементов в корзине
-	set items();
+	set items(items: HTMLElement[]);
 
 	// Сеттер для установки общей суммы заказа
-	set total();
+	set total(total: number);
 }
 ```
 
@@ -294,7 +298,16 @@ class Basket extends View<IBasketView>  {
 Класс представляет собой компонент формы, который наследуется от базового класса Component и реализует дополнительные методы для управления состоянием и валидацией формы:
 
 ```ts
+// Интерфейс статуса формы
+interface IFormState {
+	valid: boolean;
+	errors: string[];
+}
+
 export class Form<T> extends View<IFormState>  {
+	protected _submit: HTMLButtonElement;
+	protected _errors: HTMLElement;
+
 	// Конструктор класса, который принимает контейнер формы и и обработчик событий
 	constructor(protected container: HTMLFormElement, protected events: EventEmitter);
 
@@ -302,13 +315,13 @@ export class Form<T> extends View<IFormState>  {
 	protected onInputChange();
 
 	// Сеттер для установки флага валидности формы
-	set valid();
+	set valid(value: boolean);
 
 	// Сеттер для установки ошибки формы
-	set errors();
+	set errors(value: string);
 
 	//Метод для рендеринга формы с новым состоянием
-	render();
+	render(state: Partial<T> & IFormState);
 }
 ```
 ---
@@ -319,31 +332,34 @@ export class Form<T> extends View<IFormState>  {
 
 ```ts
 class Card extends Component<IProduct>  {
+	protected _title: HTMLElement;
+	protected _image?: HTMLImageElement;
+	protected _price: HTMLElement;
+	protected _category?: HTMLElement;
+	protected _description?: HTMLElement;
+	protected _button?: HTMLButtonElement;
+
 	//Конструктор класса принимает элемент HTML, в котором будет отображаться карточка, и обработчик событий
 	constructor(container: HTMLElement, actions?: ICardActions);
 
-	// Сеттер и геттер для идентификатора карточки
-	set id();
-	get id();
-
 	// Сеттер и геттер  для заголовка карточки
-	set title();
-	get title();
+	set title(value: string);
+	get title(): string;
 	
 	// Сеттер для изображения, отображаемое на карточке
-	set image();
+	set image(value: string);
 
     // Сеттер используется для установки цены товара
-	set price();
+	set price(value: number);
 
 	//Сеттер для категории, к которой относится карточка
-	set category(): void;
+	set category(value: string);
 
 	//Сеттер для текста, отображаемого на карточке
-	set description(); 
+	set description(value: string); 
 
 	//Сеттер для текста, отображаемого на кнопке
-	set button(); 
+	set button(value: string); 
 }
 
 ```
@@ -352,18 +368,29 @@ class Card extends Component<IProduct>  {
 Класс является подклассом Component и представляет собой страницу в веб-приложении:
 
 ```ts
+// Интерфейс отображения страницы 
+interface IPage {
+	counter: number;
+	catalog: HTMLElement[];
+}
+
 class Page extends Component<IPage> {
+	protected _counter: HTMLElement;
+	protected _catalog: HTMLElement;
+	protected _wrapper: HTMLElement;
+	protected _basket: HTMLElement;
+
 	//Конструктор класса принимает элемент HTML, в котором будет отображаться страница, и объект, содержащий обработчики событий для страницы
 	constructor(container: HTMLElement, protected events: IEvents);
 
 	//Сеттер для установки значения счетчика
-	set counter();
+	set counter(value: number);
 
 	//Сеттер для установки элементов магазина
-	set catalog();
+	set catalog(items: HTMLElement[]);
 
 	//Сеттер для блокировки или разблокировки страницы
-	set locked();
+	set locked(value: boolean);
 }
 ```
 
@@ -372,14 +399,16 @@ class Page extends Component<IPage> {
 
 ```ts
 class Order extends Form<OrderForm> {
+	protected _buttons: HTMLButtonElement[];
+
 	// Конструктор класса, который принимает контейнер формы и обработчик событий
 	constructor(container: HTMLFormElement, events: EventEmitter);
 
 	// Сеттер для выбора оплаты
-	set payment();
+	set payment(name: string);
 
 	//Сеттер для установки адреса 
-	set address();
+	set address(value: string);
 }
 ```
 
@@ -390,10 +419,10 @@ class Order extends Form<OrderForm> {
 class ContactsForm extends Form<OrderForm> {
 
     // Сеттер для установки значения поля ввода телефона
-	set phone()
+	set phone(value: string)
 
     // Сеттер для установки значения поля ввода электронной почты
-	set email()
+	set email(value: string)
 }
 ```
 
@@ -401,15 +430,21 @@ class ContactsForm extends Form<OrderForm> {
  Класс является подклассом Api и реализует интерфейс IStoreApi. Он отвечает за взаимодействие с сервером, предоставляя методы для получения списка товаров и отправки заказа:
 
 ```ts
+// Интерфейс отправки заказа на сервер
+interface LarekAPI {
+	getProductList: () => Promise<IProduct[]>; // Получение списка всех продуктов, доступных в магазине
+	orderProduct: (value: IOrder) => Promise<IOrderResult>; // Отправка заказа на сервер
+}
+
 class LarekApi extends Api implements LarekAPI{
 	// Конструктор класса, который принимает базовый URL, и объект для настройки запросов:
 	constructor(cdn: string, baseUrl: string, options?: RequestInit);
 
     // Метод для получения списка товаров
-	getProductList();
+	getProductList(): Promise<IProduct[]>;
 
     // Метод для отправки заказа
-	orderProduct();
+	orderProduct(value: IOrder): Promise<IOrderResult>;
 }
 ```
 
@@ -417,7 +452,15 @@ class LarekApi extends Api implements LarekAPI{
 Класс является подклассом Component и представляет собой компонент, который отвечает за отображение и взаимодействие с модальным окном в пользовательском интерфейсе:
 
 ```ts
+//Интерфейс модалки
+interface IModalData {
+	content: HTMLElement;
+}
+
 class Modal extends Component<IModalData> {
+	protected _closeButton: HTMLButtonElement;
+	protected _content: HTMLElement;
+
 	// Конструктор класса, который принимает контейнер, в котором будет отрисовываться модальное окно, и обработчик событий
 	constructor(container: HTMLElement, protected events: IEvents);
     
@@ -428,10 +471,10 @@ class Modal extends Component<IModalData> {
 	close();
 
     // Метод, который рендерит данные в модальное окно и открывает его
-	render();
+	render(data: IModalData): HTMLElement;
 
     // Сеттер для установки содержимого модального окна
-	set content();
+	set content(value: HTMLElement);
 }
 ```
 
@@ -439,11 +482,25 @@ class Modal extends Component<IModalData> {
 Класс является подклассом Component и представляет собой компонент, который отвечает за отображение и взаимодействие с модальным окном успешного заказа в пользовательском интерфейсе:
 
 ```ts
+//Интерфейс успешного заказа
+interface ISuccess {
+	id: string;
+	total: number;
+}
+
+//Интерфейс обработчика события 
+interface ISuccessActions {
+	onClick: () => void;
+}
+
 class Success extends Component<ISuccess> {
+	protected _close: HTMLElement;
+	protected _total: HTMLElement;
+
     // Конструктор класса принимает контейнер, в котором будет отрисовываться модальное окно успешного заказа, и обработчик событий
 	constructor(container: HTMLElement, actions?: ISuccessActions);
 
     //Сеттер для установки общей суммы заказа
-	set total();
+	set total(total: number);
 }
 ```

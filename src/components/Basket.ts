@@ -4,7 +4,6 @@ import { EventEmitter } from './base/events';
 
 interface IBasketView {
 	items: [];
-	total: number;
 }
 
 export class Basket extends View<IBasketView> {
