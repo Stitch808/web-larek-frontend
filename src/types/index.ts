@@ -5,6 +5,7 @@ export interface IProduct {
 	name: string;
 	category: string;
 	price: number | null;
+	index?: number;
 }
 
 export interface IBasket {

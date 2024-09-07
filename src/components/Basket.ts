@@ -4,6 +4,7 @@ import { EventEmitter } from './base/events';
 
 interface IBasketView {
 	items: [];
+	total: number;
 }
 
 export class Basket extends View<IBasketView> {
@@ -14,7 +15,6 @@ export class Basket extends View<IBasketView> {
 
 	constructor(events: EventEmitter) {
 		super(events, cloneTemplate(Basket.template));
-
 		this._list = ensureElement<HTMLElement>('.basket__list', this.container);
 		this._total = ensureElement<HTMLElement>('.basket__price', this.container);
 		this.button = ensureElement<HTMLElement>('.basket__button', this.container);

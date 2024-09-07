@@ -13,6 +13,7 @@ export class Card extends Component<IProduct> {
 	protected _category?: HTMLElement;
 	protected _description?: HTMLElement;
 	protected _button?: HTMLButtonElement;
+	protected _index?: HTMLElement;
 
 	constructor(container: HTMLElement, actions?: ICardActions) {
 		super(container);
@@ -22,6 +23,10 @@ export class Card extends Component<IProduct> {
 		this._category = container.querySelector(`.card__category`);
 		this._description = container.querySelector('.card__description')
 		this._button = container.querySelector('.card__button')
+		this._index = container.querySelector('.basket__item-index');
+
+		console.log(this._index);
+		
 
 		if (actions?.onClick) {
 			if (this._button) {
@@ -67,5 +72,9 @@ export class Card extends Component<IProduct> {
 
 	set button(value: string) {
 		this.setText(this._button, value);
+	}
+
+	set index(value: string) {
+		this.setText(this._index, value);
 	}
 }

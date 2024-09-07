@@ -360,6 +360,9 @@ class Card extends Component<IProduct>  {
 
 	//Сеттер для текста, отображаемого на кнопке
 	set button(value: string); 
+
+	//Сетер для индекса(порядкого номера), отображаемого в корзине
+	set index(value: string)
 }
 
 ```
