@@ -12,7 +12,6 @@ import { Model } from './base/Model';
 		
 	items: IProduct[] = [];
 	preview: IProduct = null;
-	catalog: IProduct[];
 	basket: IBasket = {
 		items: [],
 	};

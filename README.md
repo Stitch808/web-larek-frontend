@@ -116,8 +116,8 @@ export interface IPaymentAndAddressForm {
 
 ```ts
 class Api {
-	readonly baseUrl: string;
-	protected options: RequestInit;	
+	readonly baseUrl: string; //базовый URL для API
+	protected options: RequestInit;	//настройки для запросов к API, которые включают заголовки. По умолчанию установлен заголовок 'Content-Type': 'application/json'
 
 	//Конструктор класса принимает базовый URL и дополнительные опции для запросов
 	constructor(baseUrl: string, options: RequestInit = {});
@@ -214,21 +214,20 @@ abstract class Model<T> {
 
 ```ts
 export class AppData extends Model<IOrder> {
-	items: IProduct[] = [];
-	preview: IProduct = null;
-	catalog: IProduct[];
-	basket: IBasket = {
+	items: IProduct[] = []; //массив, который должен содержать список товаров.
+	preview: IProduct = null; //содержит превьюшку товаров
+	basket: IBasket = { //объект, который содержит массив всех товаров в корзине 
 		items: [],
 	};
 
-	order: IOrder = {
+	order: IOrder = { //Объект, представляющий заказ, который содержит выбор способа оплаты, строку для хранения адресса, строку для хранения электронной почты покупателя, строку для хранения телефона. 
 		payment: '',
 		address: '',
 		email: '',
 		phone: '',
 	};
 
-	formErrors: FormErrors = {};
+	formErrors: FormErrors = {}; //объект содержит ошибки валидации форм
 
 	//Конструктор класса принимает объект, который содержит обработчики событий для модели
 	constructor(protected events: IEvents) {}
@@ -279,10 +278,11 @@ export class AppData extends Model<IOrder> {
 
 ```ts
 class Basket extends View<IBasketView>  {
-	protected _list: HTMLElement;
-	protected _total: HTMLElement;
-	protected button: HTMLElement;
-	static template = ensureElement<HTMLTemplateElement>('#basket')
+	protected _list: HTMLElement; // элементы корзины
+	protected _total: HTMLElement; //элемент суммы заказов
+	protected button: HTMLElement; //элемент кнопки
+	static template = ensureElement<HTMLTemplateElement>('#basket') //элемент шаблона HTML с идентификатором должен быть загружен и доступен до создания экземпляра класса. Ключевое слово означает, что свойство является статическим свойством класса, то есть оно является общим для всех экземпляров класса
+
 	// Конструктор класса, который принимает EventEmitter
 	constructor(events: EventEmitter) 
 
@@ -305,8 +305,8 @@ interface IFormState {
 }
 
 export class Form<T> extends View<IFormState>  {
-	protected _submit: HTMLButtonElement;
-	protected _errors: HTMLElement;
+	protected _submit: HTMLButtonElement; //кнопка отправки формы
+	protected _errors: HTMLElement; //контейнер для отображения ошибок валидации
 
 	// Конструктор класса, который принимает контейнер формы и и обработчик событий
 	constructor(protected container: HTMLFormElement, protected events: EventEmitter);
@@ -332,19 +332,19 @@ export class Form<T> extends View<IFormState>  {
 
 ```ts
 class Card extends Component<IProduct>  {
-	protected _title: HTMLElement;
-	protected _image?: HTMLImageElement;
-	protected _price: HTMLElement;
-	protected _category?: HTMLElement;
-	protected _description?: HTMLElement;
-	protected _button?: HTMLButtonElement;
+	protected _title: HTMLElement; //заголовок карточки.
+	protected _image?: HTMLImageElement; //изображение карточки.
+	protected _price: HTMLElement; //цена товара.
+	protected _category?: HTMLElement; //категория карточки.
+	protected _description?: HTMLElement; //описание карточки.
+	protected _button?: HTMLButtonElement; //кнопка действия карточки
+	protected _index?: HTMLElement; //индекс карточки
 
 	//Конструктор класса принимает элемент HTML, в котором будет отображаться карточка, и обработчик событий
 	constructor(container: HTMLElement, actions?: ICardActions);
 
-	// Сеттер и геттер  для заголовка карточки
+	// Сеттер  для заголовка карточки
 	set title(value: string);
-	get title(): string;
 	
 	// Сеттер для изображения, отображаемое на карточке
 	set image(value: string);
@@ -378,10 +378,10 @@ interface IPage {
 }
 
 class Page extends Component<IPage> {
-	protected _counter: HTMLElement;
-	protected _catalog: HTMLElement;
-	protected _wrapper: HTMLElement;
-	protected _basket: HTMLElement;
+	protected _counter: HTMLElement; //элемент счётчика
+	protected _catalog: HTMLElement; //элемент, предоставляющий каталог
+	protected _wrapper: HTMLElement; //элемент, оборачивающий страницу
+	protected _basket: HTMLElement; //лемент, предоставляющий корзину.
 
 	//Конструктор класса принимает элемент HTML, в котором будет отображаться страница, и объект, содержащий обработчики событий для страницы
 	constructor(container: HTMLElement, protected events: IEvents);
@@ -402,7 +402,7 @@ class Page extends Component<IPage> {
 
 ```ts
 class Order extends Form<OrderForm> {
-	protected _buttons: HTMLButtonElement[];
+	protected _buttons: HTMLButtonElement[]; //кнопка выбора способа оплаты
 
 	// Конструктор класса, который принимает контейнер формы и обработчик событий
 	constructor(container: HTMLFormElement, events: EventEmitter);
@@ -461,8 +461,8 @@ interface IModalData {
 }
 
 class Modal extends Component<IModalData> {
-	protected _closeButton: HTMLButtonElement;
-	protected _content: HTMLElement;
+	protected _closeButton: HTMLButtonElement; //кнопка закрытие модалки
+	protected _content: HTMLElement; //элемент содержимого модального окна
 
 	// Конструктор класса, который принимает контейнер, в котором будет отрисовываться модальное окно, и обработчик событий
 	constructor(container: HTMLElement, protected events: IEvents);
@@ -497,8 +497,8 @@ interface ISuccessActions {
 }
 
 class Success extends Component<ISuccess> {
-	protected _close: HTMLElement;
-	protected _total: HTMLElement;
+	protected _close: HTMLElement; //элемент, который, при клике, вызывает функцию onClick из объекта actions
+	protected _total: HTMLElement; //общая сумма заказа
 
     // Конструктор класса принимает контейнер, в котором будет отрисовываться модальное окно успешного заказа, и обработчик событий
 	constructor(container: HTMLElement, actions?: ISuccessActions);

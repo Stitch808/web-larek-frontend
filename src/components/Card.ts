@@ -42,10 +42,6 @@ export class Card extends Component<IProduct> {
 		this.setText(this._title, value);
 	}
 
-	get title(): string {
-		return this._title.textContent || '';
-	}
-
 	set image(value: string) {
 		this.setImage(this._image, value, this.title);
 	}
